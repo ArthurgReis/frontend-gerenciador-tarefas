@@ -1,0 +1,92 @@
+<div class="container" style="display: flex; gap: 30px; padding: 20px; font-family: sans-serif;">
+
+  <div class="coluna-projetos" style="flex: 1;">
+    <h1 style="color: #2c3e50;">Meus Projetos</h1>
+    
+    <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <h3>{{ novoProjeto.id ? 'Editar' : 'Novo' }} Projeto</h3>
+      
+      <input type="text" placeholder="Nome do Projeto" [(ngModel)]="novoProjeto.nome" 
+             style="width: 100%; padding: 8px; margin-bottom: 10px;">
+      
+      <input type="text" placeholder="Descrição" [(ngModel)]="novoProjeto.descricao" 
+             style="width: 100%; padding: 8px; margin-bottom: 10px;">
+      
+      <button (click)="salvarProjeto()" style="background: #27ae60; color: white; border: none; padding: 10px; cursor: pointer;">
+        {{ novoProjeto.id ? 'Salvar Alterações' : 'Criar Projeto' }}
+      </button>
+      
+      <button *ngIf="novoProjeto.id" (click)="limparFormProjeto()" style="margin-left: 10px;">
+        Cancelar Edição
+      </button>
+    </div>
+
+    <div *ngFor="let p of meusProjetos" 
+         style="border: 1px solid #bdc3c7; border-radius: 5px; margin-bottom: 10px; padding: 15px; background: white;"
+         [style.border-left]="projetoSelecionado?.id === p.id ? '5px solid #3498db' : '1px solid #bdc3c7'">
+      
+      <h3 style="margin: 0;">{{ p.nome }}</h3>
+      <p style="color: #7f8c8d;">{{ p.descricao }}</p>
+      
+      <div style="margin-top: 10px;">
+        <button (click)="selecionarProjeto(p)" style="background: #3498db; color: white; border: none; padding: 5px 10px; margin-right: 5px; cursor: pointer;">
+          Gerenciar Tarefas
+        </button>
+        <button (click)="editarProjeto(p)" style="cursor: pointer;">Editar</button>
+        <button (click)="excluirProjeto(p.id!)" style="color: red; cursor: pointer; margin-left: 5px;">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="coluna-tarefas" style="flex: 1; background: #f9f9f9; padding: 20px; border-radius: 10px; border: 1px solid #eee;" 
+       *ngIf="projetoSelecionado">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="color: #2980b9;">Tarefas: {{ projetoSelecionado.nome }}</h2>
+      <button (click)="projetoSelecionado = null">X Fechar</button>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+      <input type="text" placeholder="Nova tarefa..." [(ngModel)]="novaTarefa.descricao" 
+             style="flex: 1; padding: 10px;">
+      <button (click)="adicionarTarefa()" style="background: #27ae60; color: white; border: none; padding: 10px; cursor: pointer;">
+        Adicionar
+      </button>
+    </div>
+
+    <ul style="list-style: none; padding: 0;">
+      <li *ngFor="let t of tarefasDoProjeto" 
+          style="background: white; border-bottom: 1px solid #eee; padding: 10px; display: flex; align-items: center; justify-content: space-between;">
+        
+        <span [style.text-decoration]="t.status === 'CONCLUIDA' ? 'line-through' : 'none'"
+              [style.color]="t.status === 'CONCLUIDA' ? '#aaa' : 'black'">
+          {{ t.descricao }}
+        </span>
+
+        <div>
+          <button (click)="concluirTarefa(t)" 
+                  [style.background]="t.status === 'CONCLUIDA' ? '#95a5a6' : '#2ecc71'"
+                  style="color: white; border: none; padding: 5px; margin-right: 5px; cursor: pointer; font-size: 0.8rem;">
+            {{ t.status === 'CONCLUIDA' ? 'Reabrir' : 'Concluir' }}
+          </button>
+
+          <button (click)="excluirTarefa(t)" style="color: red; border: none; background: none; cursor: pointer;">
+            X
+          </button>
+        </div>
+
+      </li>
+    </ul>
+
+    <p *ngIf="tarefasDoProjeto.length === 0" style="text-align: center; color: #7f8c8d;">
+      Este projeto ainda não tem tarefas.
+    </p>
+
+  </div>
+
+  <div *ngIf="!projetoSelecionado" style="flex: 1; display: flex; align-items: center; justify-content: center; color: #95a5a6;">
+    <h3>Selecione um projeto à esquerda para ver suas tarefas</h3>
+  </div>
+
+</div>
